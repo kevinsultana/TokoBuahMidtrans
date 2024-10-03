@@ -21,14 +21,10 @@ export default function HomeScreen({navigation}) {
   const {selectedCategory, fruitsToDisplay} = useSelector(
     state => state.fruits,
   );
-  const totalItemsInCart = useSelector(state => state.cart.totalQuantity);
+  const totalItemsInCart = useSelector(state => state.cart.totalItem);
 
   const handleCategorySelect = category => {
     dispatch(selectCategory(category));
-  };
-
-  const handleAddToCart = fruit => {
-    dispatch(addToCart(fruit)); // Dispatch addToCart action
   };
 
   const renderFruits = () => {
@@ -76,7 +72,7 @@ export default function HomeScreen({navigation}) {
             </Text>
             <TouchableOpacity
               style={styles.cartButton}
-              onPress={handleAddToCart}>
+              onPress={() => dispatch(addToCart(item))}>
               <Icon name="cart" size={20} color={'white'} />
             </TouchableOpacity>
           </TouchableOpacity>

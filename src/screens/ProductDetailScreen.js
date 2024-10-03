@@ -2,10 +2,14 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Gap} from '../components';
+import {useDispatch, useSelector} from 'react-redux';
+import {addToCart} from '../store/cartSlice';
 
 export default function ProductDetailScreen({route, navigation}) {
   // Get the fruit data passed via navigation
   const {fruit} = route.params;
+  const dispatch = useDispatch();
+  const totalItemsInCart = useSelector(state => state.cart.totalItem);
 
   return (
     <View style={styles.container}>
@@ -19,8 +23,13 @@ export default function ProductDetailScreen({route, navigation}) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="chevron-left" color={'black'} size={40} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
           <Icon name="cart" color={'black'} size={40} />
+          {totalItemsInCart > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{totalItemsInCart}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -66,7 +75,7 @@ export default function ProductDetailScreen({route, navigation}) {
           <Text style={styles.price}>
             Rp {fruit.price_per_unit.toLocaleString()}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => dispatch(addToCart(fruit))}>
             <View
               style={{
                 flexDirection: 'row',
@@ -91,6 +100,19 @@ export default function ProductDetailScreen({route, navigation}) {
 }
 
 const styles = StyleSheet.create({
+  cartBadge: {
+    position: 'absolute',
+    right: -5,
+    top: -5,
+    backgroundColor: 'green',
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+  },
   name: {color: 'black'},
   container: {
     flex: 1,

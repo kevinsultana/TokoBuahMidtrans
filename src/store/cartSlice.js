@@ -1,31 +1,89 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
-  items: [], // Array of cart items
-  totalQuantity: 0, // Total number of items in the cart
+  item: [],
+  totalItem: 0,
+  totalPrice: 0,
 };
 
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const existingItem = state.items.find(
-        item => item.name === action.payload.name,
-      );
+    addToCart(state, action) {
+      const itemToAdd = action.payload;
+      const isExist = state.item.find(item => item.name == itemToAdd.name);
 
-      if (existingItem) {
-        existingItem.quantity += 1;
+      if (isExist) {
+        const increasedAmountItem = state.item.map(item =>
+          item.name == itemToAdd.name
+            ? {...item, amount: item.amount + 1}
+            : item,
+        );
+
+        state.item = increasedAmountItem;
+
+        state.totalItem = increasedAmountItem.reduce(
+          (acc, item) => acc + item.amount,
+          0,
+        );
+
+        state.totalPrice = increasedAmountItem.reduce(
+          (acc, item) => acc + item.amount * item.price_per_unit,
+          0,
+        );
       } else {
-        state.items.push({...action.payload, quantity: 1});
-      }
+        const newItem = [{...itemToAdd, amount: 1}, ...state.item];
 
-      // Update total quantity
-      state.totalQuantity += 1;
+        state.item = newItem;
+
+        state.totalItem = newItem.reduce((acc, item) => acc + item.amount, 0);
+
+        state.totalPrice = newItem.reduce(
+          (acc, item) => acc + item.amount * item.price_per_unit,
+          0,
+        );
+      }
+    },
+    removeFromCart(state, action) {
+      const itemToSubtract = action.payload;
+      const isExist = state.item.find(item => item.name == itemToSubtract.name);
+
+      if (isExist) {
+        if (itemToSubtract.amount === 1) {
+          // Remove the item from the cart if its amount is 1 (i.e., it will be reduced to 0)
+          state.item = state.item.filter(
+            item => item.name !== itemToSubtract.name,
+          );
+        } else {
+          // Otherwise, decrease the amount
+          const decreaseAmountItem = state.item.map(item =>
+            item.name == itemToSubtract.name
+              ? {...item, amount: item.amount - 1}
+              : item,
+          );
+          state.item = decreaseAmountItem;
+        }
+
+        // Update the total price and total items
+        state.totalPrice = state.item.reduce(
+          (acc, item) => acc + item.amount * item.price_per_unit,
+          0,
+        );
+        state.totalItem = state.item.reduce(
+          (acc, item) => acc + item.amount,
+          0,
+        );
+      }
+    },
+    emptyTheCart(state) {
+      state.item = [];
+      state.totalItem = 0;
+      state.totalPrice = 0;
     },
   },
 });
 
-export const {addToCart} = cartSlice.actions;
+export const {addToCart, removeFromCart, emptyTheCart} = cartSlice.actions;
 
 export default cartSlice.reducer;
