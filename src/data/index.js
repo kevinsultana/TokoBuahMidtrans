@@ -1,20 +1,6 @@
 import {ImageSourcePropType} from 'react-native';
 
-export type FruitDataTypes = {
-  category: string;
-  description: string;
-  color: string;
-  types: {
-    name: string;
-    description: string;
-    price_per_unit: number;
-    color: string;
-    image: ImageSourcePropType;
-    amount: number;
-  }[];
-}[];
-
-export const FruitData: FruitDataTypes = [
+export const FruitData = [
   {
     category: 'Apples',
     description:
