@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
 import {selectCategory} from '../store/fruitSlice';
 import {FruitData} from '../data';
+import {addToCart} from '../store/cartSlice';
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
@@ -20,9 +21,14 @@ export default function HomeScreen({navigation}) {
   const {selectedCategory, fruitsToDisplay} = useSelector(
     state => state.fruits,
   );
+  const totalItemsInCart = useSelector(state => state.cart.totalQuantity);
 
   const handleCategorySelect = category => {
     dispatch(selectCategory(category));
+  };
+
+  const handleAddToCart = fruit => {
+    dispatch(addToCart(fruit)); // Dispatch addToCart action
   };
 
   const renderFruits = () => {
@@ -68,7 +74,9 @@ export default function HomeScreen({navigation}) {
             <Text style={styles.fruitPrice}>
               Rp {item.price_per_unit.toLocaleString()}
             </Text>
-            <TouchableOpacity style={styles.cartButton}>
+            <TouchableOpacity
+              style={styles.cartButton}
+              onPress={handleAddToCart}>
               <Icon name="cart" size={20} color={'white'} />
             </TouchableOpacity>
           </TouchableOpacity>
@@ -87,8 +95,13 @@ export default function HomeScreen({navigation}) {
             source={require('../assets/png/app_logo.png')}
             style={styles.logo}
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
             <Icon name="cart" size={30} color={'black'} />
+            {totalItemsInCart > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{totalItemsInCart}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
         <View style={{marginHorizontal: 10}}>
@@ -147,6 +160,19 @@ export default function HomeScreen({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  cartBadge: {
+    position: 'absolute',
+    right: -5,
+    top: -5,
+    backgroundColor: 'green',
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+  },
   header: {
     marginHorizontal: 10,
     marginVertical: 20,
