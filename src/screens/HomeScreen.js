@@ -33,10 +33,11 @@ export default function HomeScreen({navigation}) {
           return (
             <View
               style={{
+                marginTop: 20,
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                opacity: 0.5,
+                opacity: 0.2,
               }}>
               <View style={{width: 50, height: 2, backgroundColor: 'black'}} />
               <Image
