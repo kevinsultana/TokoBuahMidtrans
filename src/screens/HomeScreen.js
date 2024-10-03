@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 20,
+    elevation: 5,
   },
   headerContent: {
     margin: 10,
@@ -207,10 +208,9 @@ const styles = StyleSheet.create({
   },
   fruitCard: {
     flex: 1,
-    margin: 10,
-    // backgroundColor: `${item.color}`,
+    margin: 5,
     borderRadius: 20,
-    padding: 10,
+    padding: 25,
     alignItems: 'center',
     justifyContent: 'center',
   },
