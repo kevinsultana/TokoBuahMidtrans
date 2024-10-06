@@ -13,6 +13,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {selectCategory} from '../store/fruitSlice';
 import {FruitData} from '../data';
 import {addToCart} from '../store/cartSlice';
+import {Gap} from '../components';
 
 export default function HomeScreen({navigation}) {
   const dispatch = useDispatch();
@@ -66,6 +67,7 @@ export default function HomeScreen({navigation}) {
               source={item.image}
               style={{width: 100, height: 100, borderRadius: 10}}
             />
+            <Gap height={5} />
             <Text style={styles.fruitName}>{item.name}</Text>
             <Text style={styles.fruitPrice}>
               Rp {item.price_per_unit.toLocaleString()}
@@ -73,7 +75,7 @@ export default function HomeScreen({navigation}) {
             <TouchableOpacity
               style={styles.cartButton}
               onPress={() => dispatch(addToCart(item))}>
-              <Icon name="cart" size={20} color={'white'} />
+              <Icon name="cart-plus" size={25} color={'white'} />
             </TouchableOpacity>
           </TouchableOpacity>
         )}
@@ -92,12 +94,19 @@ export default function HomeScreen({navigation}) {
             style={styles.logo}
           />
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <Icon name="cart" size={30} color={'black'} />
-            {totalItemsInCart > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>{totalItemsInCart}</Text>
-              </View>
-            )}
+            <View
+              style={{
+                backgroundColor: '#ffe7b8',
+                padding: 8,
+                borderRadius: 30,
+              }}>
+              <Icon name="cart" size={30} color={'orange'} />
+              {totalItemsInCart > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>{totalItemsInCart}</Text>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
         </View>
         <View style={{marginHorizontal: 10}}>
@@ -158,8 +167,8 @@ export default function HomeScreen({navigation}) {
 const styles = StyleSheet.create({
   cartBadge: {
     position: 'absolute',
-    right: -5,
-    top: -5,
+    right: 1,
+    bottom: -1,
     backgroundColor: 'green',
     borderRadius: 10,
     paddingHorizontal: 5,
@@ -250,8 +259,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#ff7043',
-    padding: 5,
+    backgroundColor: '#ffffff66',
+    padding: 7,
     borderRadius: 20,
   },
 });
