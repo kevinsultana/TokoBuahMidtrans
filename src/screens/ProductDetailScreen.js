@@ -1,76 +1,179 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {CartContext} from '../context/CartContext';
-import fruitsData from '../data/Fruits'; // If fruits are imported directly from a data file
-import CartIcon from '../components/CartIcon';
-import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Gap} from '../components';
+import {useDispatch, useSelector} from 'react-redux';
+import {addToCart} from '../store/cartSlice';
 
-const ProductDetailsScreen = ({route}) => {
-  const {fruitId} = route.params;
-  const {addToCart} = useContext(CartContext); // Add only cart-related logic
-  const fruits = fruitsData; // Ensure fruits are available (from context, file, or API)
-  const navigation = useNavigation();
-
-  // Check if fruits is undefined or not an array
-  if (!Array.isArray(fruits)) {
-    console.error('Fruits data is not available or is not an array.');
-    return <Text>Error: Fruits data is not available.</Text>;
-  }
-
-  const fruit = fruits.find(f => f.id === fruitId);
-
-  // Check if fruit is undefined (fruitId might not exist)
-  if (!fruit) {
-    return <Text>Error: Fruit not found.</Text>;
-  }
+export default function ProductDetailScreen({route, navigation}) {
+  // Get the fruit data passed via navigation
+  const {fruit} = route.params;
+  const dispatch = useDispatch();
+  const totalItemsInCart = useSelector(state => state.cart.totalItem);
 
   return (
     <View style={styles.container}>
-      <View style={{alignSelf: 'flex-end'}}>
-        <CartIcon onPress={() => navigation.navigate('Cart')} />
+      {/* navigation and cart */}
+      <View
+        style={{
+          flexDirection: 'row',
+          margin: 10,
+          justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="chevron-left" color={'black'} size={40} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+          <Icon name="cart" color={'black'} size={40} />
+          {totalItemsInCart > 0 && (
+            <View style={styles.cartBadge}>
+              <Text style={styles.cartBadgeText}>{totalItemsInCart}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
-      <Image source={{uri: fruit.image}} style={styles.image} />
-      <Text style={styles.name}>{fruit.name}</Text>
-      <Text style={styles.description}>{fruit.description}</Text>
-      <Text style={styles.price}>Rp. {fruit.price}</Text>
-      <TouchableOpacity style={styles.button} onPress={() => addToCart(fruit)}>
-        <Text style={styles.buttonText}>Add to Cart</Text>
-      </TouchableOpacity>
+
+      {/* iimage */}
+      <Image source={fruit.image} style={styles.image} />
+
+      <Gap height={20} />
+
+      {/* details title */}
+      <View style={styles.detailsContainer}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{fruit.name}</Text>
+        </View>
+
+        <Gap height={20} />
+
+        {/* rating and stock */}
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flexDirection: 'row'}}>
+            <Icon name="star" color={'#FFD700'} size={20} />
+            <Icon name="star" color={'#FFD700'} size={20} />
+            <Icon name="star" color={'#FFD700'} size={20} />
+            <Icon name="star" color={'#FFD700'} size={20} />
+            <Icon name="star" color={'#FFD700'} size={20} />
+          </View>
+          <Text style={styles.stock}>Stock: 20</Text>
+        </View>
+
+        <Gap height={20} />
+
+        {/* description */}
+        <View style={{flex: 1}}>
+          <Text style={styles.description}>{fruit.description}</Text>
+        </View>
+
+        {/* price and addtocart */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Text style={styles.price}>
+            Rp {fruit.price_per_unit.toLocaleString()}
+          </Text>
+          <TouchableOpacity onPress={() => dispatch(addToCart(fruit))}>
+            <View
+              style={{
+                flexDirection: 'row',
+                backgroundColor: fruit.color,
+                width: 250,
+                height: 50,
+                borderRadius: 25,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Icon name="cart-plus" color={'white'} size={25} />
+              <Gap width={10} />
+              <Text style={{color: 'white', fontWeight: '700', fontSize: 20}}>
+                Add to Cart
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
+  cartBadge: {
+    position: 'absolute',
+    right: -5,
+    top: -5,
+    backgroundColor: 'green',
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 12,
+  },
+  name: {color: 'black'},
   container: {
-    // flex: 1,
-    padding: 20,
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  backButton: {
+    marginTop: 20,
+    marginLeft: 10,
   },
   image: {
     width: '100%',
-    height: 300,
+    height: 350,
+    resizeMode: 'contain',
+    marginBottom: 20,
   },
-  name: {
+  detailsContainer: {
+    elevation: 5,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    flex: 1,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    color: 'black',
     fontSize: 24,
     fontWeight: 'bold',
   },
+  stock: {
+    fontSize: 16,
+    color: 'black',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
   description: {
     fontSize: 16,
+    color: 'black',
     marginVertical: 10,
+    // textAlign: 'center',
   },
   price: {
     fontSize: 20,
-    color: '#888',
+    fontWeight: 'bold',
+    color: 'black',
+    marginVertical: 10,
   },
-  button: {
-    backgroundColor: '#ffa500',
-    padding: 15,
-    borderRadius: 5,
+  cartButton: {
+    backgroundColor: '#7A42F4',
+    paddingVertical: 15,
+    borderRadius: 25,
     alignItems: 'center',
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  cartButtonText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
-
-export default ProductDetailsScreen;

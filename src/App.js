@@ -1,14 +1,15 @@
 import {NavigationContainer} from '@react-navigation/native';
+import {Provider} from 'react-redux';
+import {store} from './store';
 
 import Navigator from './routes';
-import {CartProvider} from './context/CartContext';
 
 export default function App() {
   return (
-    <CartProvider>
+    <Provider store={store}>
       <NavigationContainer>
         <Navigator />
       </NavigationContainer>
-    </CartProvider>
+    </Provider>
   );
 }
